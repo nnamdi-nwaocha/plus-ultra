@@ -1,0 +1,21 @@
+{
+  "user1": {
+    "tasks": [
+      {
+        "name": "grogramming",
+        "expectedTime": "60",
+        "id": 1736108072335
+      },
+      {
+        "name": "read",
+        "expectedTime": "30",
+        "id": 1736108128670
+      }
+    ],
+    "completedTasks": {
+      "2025-01-05": [
+        1736108072335
+      ]
+    }
+  }
+}
