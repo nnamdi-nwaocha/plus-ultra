@@ -7,9 +7,9 @@ import Dashboard from "@/components/Dashboard";
 import { User, Task } from "../app/types";
 
 const USERS: User[] = [
-  { username: "user1", password: "pass1" },
-  { username: "user2", password: "pass2" },
-  { username: "user3", password: "pass3" },
+  { username: "Pickson", password: "123456" },
+  { username: "Alex", password: "123456" },
+  { username: "Nelson", password: "123456" },
 ];
 
 export default function Home() {
