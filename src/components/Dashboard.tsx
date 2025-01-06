@@ -1,75 +1,69 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { User, Task } from "../app/types";
+import { useState, useEffect } from "react";
 
-const USERS: User[] = [
-  { username: "user1", password: "pass1" },
-  { username: "user2", password: "pass2" },
-  { username: "user3", password: "pass3" },
-];
+interface ProgressLog {
+  username: string;
+  completed_tasks: number;
+  pending_tasks: number;
+  date?: string;
+}
 
 export default function Dashboard() {
-  const [data, setData] = useState<
-    Record<string, { tasks: Task[]; completedTasks: Record<string, number[]> }>
-  >({});
-  const [selectedDate, setSelectedDate] = useState(
-    new Date().toISOString().split("T")[0]
+  const [todayProgress, setTodayProgress] = useState<ProgressLog[]>([]);
+  const [historicalProgress, setHistoricalProgress] = useState<ProgressLog[]>(
+    []
   );
 
   useEffect(() => {
-    fetchData();
+    fetchTodayProgress();
+    fetchHistoricalProgress();
   }, []);
 
-  const fetchData = async () => {
-    const response = await fetch("/api/data");
-    const savedData = await response.json();
-    setData(savedData);
-  };
+  async function fetchTodayProgress() {
+    const response = await fetch("/api/progress");
+    if (response.ok) {
+      const data = await response.json();
+      setTodayProgress(data);
+    } else {
+      console.log("Error fetching today's progress:", await response.text());
+    }
+  }
 
-  const calculateProgress = (username: string) => {
-    const userTasks = data[username]?.tasks || [];
-    const completedTaskIds = data[username]?.completedTasks[selectedDate] || [];
-    const completedCount = completedTaskIds.length;
-    const totalCount = userTasks.length;
-    return totalCount > 0 ? (completedCount / totalCount) * 100 : 0;
-  };
+  async function fetchHistoricalProgress() {
+    const response = await fetch("/api/progress?days=7");
+    if (response.ok) {
+      const data = await response.json();
+      setHistoricalProgress(data);
+    } else {
+      console.log("Error fetching historical progress:", await response.text());
+    }
+  }
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-lg">
-      <h2 className="text-3xl font-bold mb-6 text-gray-800">Dashboard</h2>
-      <div className="mb-6">
-        <label
-          htmlFor="date"
-          className="block text-sm font-medium text-gray-700 mb-2"
-        >
-          Select Date
-        </label>
-        <input
-          id="date"
-          type="date"
-          value={selectedDate}
-          onChange={(e) => setSelectedDate(e.target.value)}
-          className="border border-gray-300 rounded-md p-2 w-full max-w-xs focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-        />
+    <div>
+      <h2 className="text-2xl font-bold mb-4">Dashboard</h2>
+      <div className="mb-8">
+        <h3 className="text-xl font-semibold mb-2">Today's Progress</h3>
+        <ul>
+          {todayProgress.map((log, index) => (
+            <li key={index} className="mb-2">
+              {log.username}: {log.completed_tasks} completed,{" "}
+              {log.pending_tasks} pending
+            </li>
+          ))}
+        </ul>
       </div>
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {USERS.map((user) => (
-          <div key={user.username} className="bg-gray-50 p-4 rounded-lg shadow">
-            <h3 className="text-xl font-semibold mb-3 text-gray-700">
-              {user.username}
-            </h3>
-            <div className="w-full bg-gray-200 rounded-full h-4 mb-2">
-              <div
-                className="bg-blue-600 h-4 rounded-full transition-all duration-500 ease-in-out"
-                style={{ width: `${calculateProgress(user.username)}%` }}
-              ></div>
-            </div>
-            <p className="text-sm text-gray-600">
-              {calculateProgress(user.username).toFixed(2)}% completed
-            </p>
-          </div>
-        ))}
+      <div>
+        <h3 className="text-xl font-semibold mb-2">Historical Progress</h3>
+        <ul>
+          {historicalProgress.map((log, index) => (
+            <li key={index} className="mb-2">
+              {log.date}: {log.username} - {log.completed_tasks} completed,{" "}
+              {log.pending_tasks} pending
+            </li>
+          ))}
+        </ul>
       </div>
     </div>
   );

@@ -1,21 +1,12 @@
 {
-  "user1": {
+  "error": "Internal Server Error",
+  "pickson": {
     "tasks": [
       {
-        "name": "grogramming",
+        "name": "coding",
         "expectedTime": "60",
-        "id": 1736108072335
-      },
-      {
-        "name": "read",
-        "expectedTime": "30",
-        "id": 1736108128670
+        "id": 1736185984299
       }
-    ],
-    "completedTasks": {
-      "2025-01-05": [
-        1736108072335
-      ]
-    }
+    ]
   }
 }
